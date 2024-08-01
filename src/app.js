@@ -2,6 +2,7 @@ const express = require('express');
 const { rateLimiter } = require('./middleware/rateLimiter.js');
 const { AppError } = require('./utils/appError');
 require("dotenv").config();
+const cors = require('cors');
 
 // Routes
 const authRoutes = require('./routes/authRoutes');
@@ -14,6 +15,13 @@ const { swaggerUi, specs } = require('./config/swagger.js');
 const app = express();
 
 // Middleware
+app.use(cors()); // allow any origin
+// app.use(cors({
+//   origin: ['http://frontend-domain.com', 'http://another-allowed-domain.com'],
+//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//   credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+//   optionsSuccessStatus: 204 // For legacy browser support
+// }));
 app.use(express.json());
 app.use(rateLimiter);
 

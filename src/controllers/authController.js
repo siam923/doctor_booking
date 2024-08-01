@@ -4,21 +4,40 @@ const DoctorSubscription = require('../models/DoctorSubscription.js');
 const { validateRegistration, validateLogin } = require('../utils/validators/validation.js');
 const { generateTokens, verifyRefreshToken } = require('../utils/jwt.js');
 
- const register = async (req, res) => {
+const getUserBymail = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Find the user by email
+    const user = await User.findOne({ email }).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Return the user details
+    res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const register = async (req, res) => {
   try {
     const { error } = validateRegistration(req.body);
     if (error) return res.status(400).json({ message: error.details[0].message });
 
-    const { username, email, phone, password, role } = req.body;
+    const { fullname, email, phone, password, role } = req.body;
 
-    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+    const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ message: 'User already exists' });
 
     const userRole = await Role.findOne({ name: role });
     if (!userRole) return res.status(400).json({ message: 'Invalid role' });
 
     const newUser = new User({
-      username,
+      fullname,
       email,
       phone,
       passwordHash: password,
@@ -27,7 +46,16 @@ const { generateTokens, verifyRefreshToken } = require('../utils/jwt.js');
 
     await newUser.save();
 
-    res.status(201).json({ message: 'User registered successfully' });
+    res.status(201).json({
+      message: 'User registered successfully',
+      user: {
+        id: newUser._id,
+        fullname: newUser.fullname,
+        email: newUser.email,
+        phone: newUser.phone,
+        role: newUser.role
+      }
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
@@ -64,7 +92,7 @@ const { generateTokens, verifyRefreshToken } = require('../utils/jwt.js');
       refreshToken,
       user: {
         id: user._id,
-        username: user.username,
+        fullname: user.fullname,
         email: user.email,
         role: user.role.name,
         subscriptionStatus
@@ -103,4 +131,4 @@ const refreshToken = async (req, res) => {
   res.json({ message: 'Logged out successfully' });
 };
 
-module.exports = { register, login, refreshToken, logout };
+module.exports = { register, login, refreshToken, logout, getUserBymail };

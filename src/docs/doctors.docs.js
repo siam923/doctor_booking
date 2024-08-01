@@ -38,6 +38,12 @@ exports.doctorDocs = {
           },
           {
             in: 'query',
+            name: 'city',
+            schema: { type: 'string' },
+            description: 'Filter by city name',
+          },
+          {
+            in: 'query',
             name: 'search',
             schema: { type: 'string' },
             description: 'Search term for doctors',
@@ -101,9 +107,48 @@ exports.doctorDocs = {
               },
             },
           },
-          400: { description: 'Bad request' },
-          401: { description: 'Unauthorized' },
-          403: { description: 'Forbidden' },
+          400: { 
+            description: 'Bad request',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    success: { type: 'boolean' },
+                    message: { type: 'string' },
+                  },
+                },
+              },
+            },
+          },
+          401: { 
+            description: 'Unauthorized',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    success: { type: 'boolean' },
+                    message: { type: 'string' },
+                  },
+                },
+              },
+            },
+          },
+          403: { 
+            description: 'Forbidden',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    success: { type: 'boolean' },
+                    message: { type: 'string' },
+                  },
+                },
+              },
+            },
+          },
         },
       },
     },
@@ -374,6 +419,17 @@ exports.doctorDocs = {
             coordinates: { type: 'array', items: { type: 'number' } },
           },
         },
+        address: {
+          type: 'object',
+          properties: {
+            street: { type: 'string' },
+            city: { type: 'string' },
+            state: { type: 'string' },
+            country: { type: 'string' },
+            postalCode: { type: 'string' },
+          },
+        },
+      
       },
     },
     DoctorUpdateInput: {
@@ -391,6 +447,16 @@ exports.doctorDocs = {
           properties: {
             type: { type: 'string', enum: ['Point'] },
             coordinates: { type: 'array', items: { type: 'number' } },
+          },
+        },
+        address: {
+          type: 'object',
+          properties: {
+            street: { type: 'string' },
+            city: { type: 'string' },
+            state: { type: 'string' },
+            country: { type: 'string' },
+            postalCode: { type: 'string' },
           },
         },
       },

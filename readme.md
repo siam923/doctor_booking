@@ -1,2 +1,5 @@
 ### Appointment booking app
-GET /api/doctors?specialization=5f8f7b2b1c9d440000a1d3e5&hospital=City%20Hospital&location=90.4125,23.8103&search=cardio&page=1&limit=10
+Before starting the backend run the scripts if you don't have the database setup. 
+
+node src/scripts/initRoles.js
+node src/scripts/initSpecialization.js

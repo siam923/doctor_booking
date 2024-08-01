@@ -11,8 +11,15 @@ exports.validateDoctorCreation = (req, res, next) => {
     hospitals: Joi.array().items(Joi.string()),
     location: Joi.object({
       type: Joi.string().valid('Point'),
-      coordinates: Joi.array().items(Joi.number()).length(2).required()
-    }).required()
+      coordinates: Joi.array().items(Joi.number()).length(2)
+    }).optional(),
+    address: Joi.object({
+      street: Joi.string(),
+      city: Joi.string(),
+      state: Joi.string(),
+      country: Joi.string(),
+      postalCode: Joi.string()
+    }).optional()
   });
 
   const { error } = schema.validate(req.body);
@@ -33,7 +40,14 @@ exports.validateDoctorUpdate = (req, res, next) => {
     location: Joi.object({
       type: Joi.string().valid('Point'),
       coordinates: Joi.array().items(Joi.number()).length(2)
-    })
+    }).optional(),
+    address: Joi.object({
+      street: Joi.string(),
+      city: Joi.string(),
+      state: Joi.string(),
+      country: Joi.string(),
+      postalCode: Joi.string()
+    }).optional()
   });
 
   const { error } = schema.validate(req.body);
@@ -42,8 +56,6 @@ exports.validateDoctorUpdate = (req, res, next) => {
   }
   next();
 };
-
-
 
 exports.validateScheduleUpdate = (req, res, next) => {
   const schema = Joi.object({
